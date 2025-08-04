@@ -75,7 +75,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Smart Analysis</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Our AI analyzes your essay's structure, tone, and impact, providing detailed feedback on how to improve.
+                Our AI analyzes your essay&apos;s structure, tone, and impact, providing detailed feedback on how to improve.
               </p>
             </div>
 
