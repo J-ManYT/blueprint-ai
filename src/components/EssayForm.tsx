@@ -76,7 +76,7 @@ export default function EssayForm({ onSubmit, isLoading }: EssayFormProps) {
 
         {/* Submission Guidelines */}
         <div className="bg-blue-50 p-4 rounded-md">
-          <h3 className="font-medium text-blue-800 mb-2">What you'll get:</h3>
+          <h3 className="font-medium text-blue-800 mb-2">What you&apos;ll get:</h3>
           <ul className="text-sm text-blue-700 space-y-1">
             <li>• Detailed feedback on structure and flow</li>
             <li>• Suggestions for stronger word choices</li>
