@@ -65,7 +65,7 @@ Keep feedback constructive, specific, and encouraging. Focus on helping the stud
 
     // Call OpenAI API
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
@@ -76,7 +76,7 @@ Keep feedback constructive, specific, and encouraging. Focus on helping the stud
           content: feedbackPrompt,
         },
       ],
-      max_tokens: 1500,
+      max_tokens: 800,
       temperature: 0.7,
     });
 
