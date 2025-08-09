@@ -33,7 +33,7 @@ export default function Home() {
               </h1>
               
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Get personalized, intelligent feedback on your college essays. Our AI analyzes your writing 
+                Get personalized, intelligent feedback on your college essays. Jainam's AI analyzes your writing 
                 for structure, clarity, and impact, helping you craft compelling applications that stand out.
               </p>
 
@@ -55,11 +55,11 @@ export default function Home() {
               <div className="flex flex-wrap gap-6 text-sm text-gray-500">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Trusted by 10,000+ students</span>
+                  <span>Detailed analysis</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>98% acceptance rate improvement</span>
+                  <span>Incredibly quick</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -107,7 +107,7 @@ export default function Home() {
               Why Choose Blueprint.AI?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our AI-powered platform provides the same quality feedback as expensive human counselors, 
+              Jainam's AI-powered platform provides the same quality feedback as expensive human counselors, 
               but faster and more affordable.
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Smart Analysis</h3>
               <p className="text-gray-600 leading-relaxed">
-                Our AI analyzes your essay structure, tone, and impact, providing detailed feedback on how to improve your narrative.
+                Blueprint AI analyzes your essay structure, tone, and impact, providing detailed feedback on how to improve your narrative.
               </p>
             </div>
 
@@ -145,7 +145,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Proven Results</h3>
               <p className="text-gray-600 leading-relaxed">
-                Students using our service see dramatic improvements in their essay quality and college acceptance rates.
+                Students using this service see dramatic improvements in their essay quality and college acceptance rates.
               </p>
             </div>
           </div>
