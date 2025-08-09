@@ -107,7 +107,7 @@ export default function Home() {
               Why Choose Blueprint.AI?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Jainam's AI-powered platform provides the same quality feedback as expensive human counselors, 
+              Jainam&apos;s AI-powered platform provides the same quality feedback as expensive human counselors, 
               but faster and more affordable.
             </p>
           </div>
