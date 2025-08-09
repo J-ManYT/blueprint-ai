@@ -55,22 +55,30 @@ export default function DashboardPage() {
       if (!userData) {
         console.log('Creating new user record...');
         // Create user record if it doesn't exist
-        const { data: newUser, error: insertError } = await supabase
+        if (!authUser.email) {
+          console.error('Insert skipped: missing email on auth user');
+          throw new Error('Missing email on authenticated user');
+        }
+
+        const { data: newUser, error: upsertError } = await supabase
           .from('users')
-          .insert([
-            {
-              id: authUser.id,
-              email: authUser.email!,
-              essays_used_this_month: 0,
-              subscription_status: 'free'
-            }
-          ])
+          .upsert(
+            [
+              {
+                id: authUser.id,
+                email: authUser.email,
+                essays_used_this_month: 0,
+                subscription_status: 'free',
+              },
+            ],
+            { onConflict: 'id' }
+          )
           .select()
           .single();
 
-        if (insertError) {
-          console.error('Insert error:', insertError);
-          throw insertError;
+        if (upsertError) {
+          console.error('Insert error:', upsertError?.message, upsertError);
+          throw upsertError;
         }
         
         console.log('New user created:', newUser);
@@ -80,7 +88,8 @@ export default function DashboardPage() {
         setUser(userData);
       }
     } catch (error) {
-      console.error('CheckUser error:', error);
+      const err = error as unknown as { message?: string };
+      console.error('CheckUser error:', err?.message || error, error);
     } finally {
       setLoading(false);
     }
