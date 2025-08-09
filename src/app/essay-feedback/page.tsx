@@ -1,32 +1,59 @@
 // src/app/essay-feedback/page.tsx
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 import EssayForm from '@/components/EssayForm';
 
 interface FeedbackResponse {
   feedback: string;
   wordCount: number;
   timestamp: string;
+  userAuthenticated: boolean;
+  essaysRemaining: string | number;
 }
 
 export default function EssayFeedbackPage() {
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Checked user:', user);
+      setUser(user);
+    } catch (error) {
+      console.log('No authenticated user');
+    }
+  };
 
   const handleEssaySubmit = async (essay: string, prompt: string) => {
+    console.log('User object:', user);
+    console.log('User ID:', user?.id);
+    
     setIsLoading(true);
     setError(null);
     setFeedback(null);
 
     try {
+      console.log('Sending to API:', { essay: essay.substring(0, 50), prompt: prompt.substring(0, 50) });
       const response = await fetch('/api/submit-essay', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ essay, prompt }),
+        body: JSON.stringify({ 
+          essay,
+          prompt
+        }),
       });
+
+      console.log('API response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -34,6 +61,7 @@ export default function EssayFeedbackPage() {
       }
 
       const data: FeedbackResponse = await response.json();
+      console.log('API response data:', data);
       setFeedback(data);
       
       // Scroll to results
@@ -44,6 +72,7 @@ export default function EssayFeedbackPage() {
       }, 100);
 
     } catch (err) {
+      console.error('Submit error:', err);
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
@@ -68,6 +97,22 @@ export default function EssayFeedbackPage() {
             Get instant, detailed feedback on your college essays from our AI counselor. 
             Improve your writing and increase your chances of admission.
           </p>
+          
+          {/* User Status */}
+          {user ? (
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg inline-block">
+              <p className="text-blue-800">
+                Logged in as: <strong>{user.email}</strong>
+              </p>
+            </div>
+          ) : (
+            <div className="mt-4 p-3 bg-yellow-50 rounded-lg inline-block">
+              <p className="text-yellow-800">
+                Using anonymous mode - essays will not be saved. 
+                <a href="/auth/login" className="underline font-medium ml-1">Sign in</a> to track your progress.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Essay Form */}
@@ -119,6 +164,25 @@ export default function EssayFeedbackPage() {
                   <p className="text-gray-600">
                     Generated on {new Date(feedback.timestamp).toLocaleDateString()} • {feedback.wordCount} words
                   </p>
+                  
+                  {/* Usage Status */}
+                  {feedback.userAuthenticated ? (
+                    <div className="mt-2">
+                      {feedback.essaysRemaining === 'unlimited' ? (
+                        <span className="text-green-600 font-medium">✓ Premium Plan - Unlimited Essays</span>
+                      ) : (
+                        <span className="text-blue-600 font-medium">
+                          ✓ Essays remaining this month: {feedback.essaysRemaining}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="mt-2">
+                      <span className="text-yellow-600 font-medium">
+                        ⚠ Anonymous submission - not saved to your account
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={handleStartOver}
@@ -153,6 +217,15 @@ export default function EssayFeedbackPage() {
                 >
                   Copy to Clipboard
                 </button>
+                
+                {user && (
+                  <a
+                    href="/dashboard"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    View Dashboard
+                  </a>
+                )}
               </div>
             </div>
           </div>

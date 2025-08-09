@@ -1,6 +1,8 @@
 // src/app/api/submit-essay/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -23,6 +25,78 @@ export async function POST(request: NextRequest) {
         { error: 'Essay must be at least 50 characters long' },
         { status: 400 }
       );
+    }
+
+    // Create an authenticated Supabase server client using cookies
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name, value, options) {
+            cookieStore.set({ name, value, ...options });
+          },
+          remove(name, options) {
+            cookieStore.delete({ name, ...options });
+          },
+        },
+      }
+    );
+
+    // Derive the current user from the session instead of trusting a client-provided userId
+    const { data: { user } } = await supabase.auth.getUser();
+
+    let userRecord: any = null;
+    let essaysUsed = 0;
+
+    if (user) {
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (userError && userError.code !== 'PGRST116') {
+        console.error('Error fetching user record:', userError);
+      }
+
+      if (!userData) {
+        // Create a user record on-demand if it doesn't exist
+        const { data: newUser, error: insertUserError } = await supabase
+          .from('users')
+          .insert([
+            {
+              id: user.id,
+              email: user.email!,
+              essays_used_this_month: 0,
+              subscription_status: 'free',
+            },
+          ])
+          .select()
+          .single();
+
+        if (insertUserError) {
+          console.error('Error creating user record:', insertUserError);
+        } else if (newUser) {
+          userRecord = newUser;
+        }
+      } else {
+        userRecord = userData;
+      }
+
+      essaysUsed = userRecord?.essays_used_this_month || 0;
+
+      // Check if free user has exceeded limit
+      if (userRecord?.subscription_status === 'free' && essaysUsed >= 3) {
+        return NextResponse.json(
+          { error: 'Free plan limit reached. Please upgrade to premium for unlimited essays.' },
+          { status: 403 }
+        );
+      }
     }
 
     // Create the feedback prompt
@@ -86,33 +160,70 @@ Keep feedback constructive, specific, and encouraging. Focus on helping the stud
       throw new Error('No feedback generated');
     }
 
+    const wordCount = essay.trim().split(/\s+/).length;
+
+    // If user is authenticated, save to database and update usage
+    if (user && userRecord) {
+      try {
+        // Save essay to database
+        const { error: insertError } = await supabase
+          .from('essays')
+          .insert([
+            {
+              user_id: user.id,
+              essay_text: essay,
+              essay_prompt: prompt,
+              ai_feedback: feedback,
+              word_count: wordCount,
+              title: `Essay ${new Date().toLocaleDateString()}`
+            }
+          ]);
+        if (insertError) {
+          console.error('Database save error (essays insert):', insertError);
+        }
+
+        // Update user's essay usage count
+        const newCount = essaysUsed + 1;
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ 
+            essays_used_this_month: newCount
+          })
+          .eq('id', user.id);
+        if (updateError) {
+          console.error('Database save error (users update):', updateError);
+        }
+
+        essaysUsed = newCount;
+      } catch (dbError) {
+        console.error('Database save error:', dbError);
+      }
+    }
+
+    // Calculate remaining essays
+    let essaysRemaining;
+    if (userRecord) {
+      if (userRecord.subscription_status === 'premium') {
+        essaysRemaining = 'unlimited';
+      } else {
+        essaysRemaining = Math.max(0, 3 - essaysUsed);
+      }
+    } else {
+      essaysRemaining = 'anonymous';
+    }
+
     // Return the feedback
     return NextResponse.json({
       feedback,
-      wordCount: essay.trim().split(/\s+/).length,
+      wordCount,
       timestamp: new Date().toISOString(),
+      userAuthenticated: !!user && !!userRecord,
+      essaysRemaining
     });
 
   } catch (error) {
     console.error('Error generating essay feedback:', error);
     
-    // Handle specific OpenAI errors
-    if (error instanceof Error) {
-      if (error.message.includes('API key')) {
-        return NextResponse.json(
-          { error: 'API configuration error. Please try again later.' },
-          { status: 500 }
-        );
-      }
-      
-      if (error.message.includes('quota')) {
-        return NextResponse.json(
-          { error: 'Service temporarily unavailable. Please try again later.' },
-          { status: 503 }
-        );
-      }
-    }
-
     return NextResponse.json(
       { error: 'Failed to generate feedback. Please try again.' },
       { status: 500 }
