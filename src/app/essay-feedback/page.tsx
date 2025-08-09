@@ -1,6 +1,7 @@
 // src/app/essay-feedback/page.tsx
 'use client';
 import { useState, useEffect } from 'react';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import EssayForm from '@/components/EssayForm';
 
@@ -16,7 +17,7 @@ export default function EssayFeedbackPage() {
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
 
   useEffect(() => {
     checkUser();
@@ -27,7 +28,7 @@ export default function EssayFeedbackPage() {
       const { data: { user } } = await supabase.auth.getUser();
       console.log('Checked user:', user);
       setUser(user);
-    } catch (error) {
+    } catch (_err) {
       console.log('No authenticated user');
     }
   };

@@ -1,6 +1,6 @@
 // src/app/dashboard/page.tsx
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -17,11 +17,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     try {
       const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
       
@@ -85,14 +81,14 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error('CheckUser error:', error);
-      // Don't redirect on every error - only redirect if it's an auth issue
-      if (!user) {
-        router.push('/auth/login');
-      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

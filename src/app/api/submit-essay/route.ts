@@ -50,7 +50,13 @@ export async function POST(request: NextRequest) {
     // Derive the current user from the session instead of trusting a client-provided userId
     const { data: { user } } = await supabase.auth.getUser();
 
-    let userRecord: any = null;
+    type DbUser = {
+      id: string;
+      email: string | null;
+      essays_used_this_month: number;
+      subscription_status: 'free' | 'premium';
+    };
+    let userRecord: DbUser | null = null;
     let essaysUsed = 0;
 
     if (user) {

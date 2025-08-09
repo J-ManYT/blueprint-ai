@@ -18,7 +18,7 @@ export default function LoginPage() {
     setMessage('');
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -27,8 +27,8 @@ export default function LoginPage() {
 
       // Redirect to dashboard after successful login
       router.push('/dashboard');
-    } catch (error: any) {
-      setMessage(error.message);
+    } catch (error: unknown) {
+      setMessage(error instanceof Error ? error.message : 'Unexpected error');
     } finally {
       setLoading(false);
     }
