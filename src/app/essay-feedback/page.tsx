@@ -1,6 +1,7 @@
 // src/app/essay-feedback/page.tsx
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import EssayForm from '@/components/EssayForm';
@@ -18,20 +19,23 @@ export default function EssayFeedbackPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log('Checked user:', user);
-      setUser(user);
-    } catch (_err) {
-      console.log('No authenticated user');
-    }
-  };
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          router.replace('/auth/signup?next=/essay-feedback');
+          return;
+        }
+        setUser(user);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    })();
+  }, [router]);
 
   const handleEssaySubmit = async (essay: string, prompt: string) => {
     console.log('User object:', user);
@@ -86,6 +90,26 @@ export default function EssayFeedbackPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const Button = ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }) => (
+    <button
+      {...props}
+      className={`bg-[#0F2D52] text-white px-4 py-2 rounded-md transition-all duration-200 hover:bg-[#1a4a7a] hover:shadow-md hover:-translate-y-0.5 ${props.className || ''}`}
+    >
+      {children}
+    </button>
+  );
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
@@ -100,24 +124,37 @@ export default function EssayFeedbackPage() {
           </p>
           
           {/* User Status */}
-          {user ? (
+          {user && (
             <div className="mt-4 p-3 bg-blue-50 rounded-lg inline-block">
               <p className="text-blue-800">
                 Logged in as: <strong>{user.email}</strong>
               </p>
             </div>
-          ) : (
-            <div className="mt-4 p-3 bg-yellow-50 rounded-lg inline-block">
-              <p className="text-yellow-800">
-                Using anonymous mode - essays will not be saved. 
-                <a href="/auth/login" className="underline font-medium ml-1">Sign in</a> to track your progress.
-              </p>
-            </div>
           )}
         </div>
 
-        {/* Essay Form */}
-        {!feedback && (
+        {/* Gate: require login */}
+        {!user && (
+          <div className="max-w-3xl mx-auto mb-10">
+            <div className="bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Create a free account to get essay feedback</h3>
+              <p className="text-gray-600 mb-6">Sign up to receive 3 free reviews. Track your progress and unlock premium features.</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/auth/signup">
+                  <Button className="px-6 py-3 text-base">Sign up — 3 free reviews</Button>
+                </a>
+                <a href="/auth/login">
+                  <button className="border-2 border-[#0F2D52] text-[#0F2D52] px-6 py-3 rounded-md font-medium transition-all duration-200 hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5">
+                    I already have an account
+                  </button>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Essay Form (only when logged in) */}
+        {user && !feedback && (
           <EssayForm onSubmit={handleEssaySubmit} isLoading={isLoading} />
         )}
 
@@ -185,12 +222,7 @@ export default function EssayFeedbackPage() {
                     </div>
                   )}
                 </div>
-                <button
-                  onClick={handleStartOver}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Submit Another Essay
-                </button>
+                <Button onClick={handleStartOver} className="px-4 py-2">Submit Another Essay</Button>
               </div>
 
               {/* Feedback Content */}

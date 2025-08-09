@@ -39,14 +39,14 @@ export default function Home() {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link href="/essay-feedback">
-                  <button className="bg-[#0F2D52] hover:bg-[#1a4a7a] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 shadow-lg hover:shadow-xl w-full sm:w-auto">
-                    Start Your Free Trial
+                <Link href="/auth/signup">
+                  <button className="bg-[#0F2D52] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:bg-[#1a4a7a] hover:-translate-y-0.5 w-full sm:w-auto">
+                    Sign up — 3 free reviews
                   </button>
                 </Link>
-                <Link href="/essay-feedback">
-                  <button className="border-2 border-[#0F2D52] text-[#0F2D52] hover:bg-gray-50 font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 w-full sm:w-auto">
-                    See How It Works
+                <Link href="/auth/login">
+                  <button className="border-2 border-[#0F2D52] text-[#0F2D52] font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:-translate-y-0.5 w-full sm:w-auto">
+                    I already have an account
                   </button>
                 </Link>
               </div>
@@ -181,7 +181,7 @@ export default function Home() {
               <span className="text-xl font-bold text-white">Blueprint.AI</span>
             </div>
             <div className="text-gray-400 text-center md:text-right">
-              <p className="mb-2">© 2024 Blueprint.AI. All rights reserved.</p>
+              <p className="mb-2">© 2025 Blueprint.AI. All rights reserved.</p>
               <p className="text-sm">Helping students achieve their college dreams.</p>
             </div>
           </div>

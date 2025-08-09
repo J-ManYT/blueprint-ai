@@ -50,6 +50,14 @@ export async function POST(request: NextRequest) {
     // Derive the current user from the session instead of trusting a client-provided userId
     const { data: { user } } = await supabase.auth.getUser();
 
+    // Require authentication to submit essays
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Please create a free account to get essay feedback. Sign up for 3 free reviews!' },
+        { status: 401 }
+      );
+    }
+
     type DbUser = {
       id: string;
       email: string | null;
