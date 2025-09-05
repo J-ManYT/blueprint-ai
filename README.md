@@ -1,11 +1,4 @@
-That's just the default Next.js boilerplate README. You need to replace it with your actual project description.
-Quick fix - 5 minutes:
-
-Click the pencil icon to edit the README
-Delete everything
-Replace with:
-
-markdown# Blueprint.AI - AI-Powered Essay Feedback Platform
+Blueprint.AI - AI-Powered Essay Feedback Platform
 
 AI-powered SaaS platform providing instant, detailed feedback on college essays at 95% cost reduction compared to traditional coaching.
 
