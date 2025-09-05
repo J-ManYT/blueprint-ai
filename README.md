@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+That's just the default Next.js boilerplate README. You need to replace it with your actual project description.
+Quick fix - 5 minutes:
 
-## Getting Started
+Click the pencil icon to edit the README
+Delete everything
+Replace with:
 
-First, run the development server:
+markdown# Blueprint.AI - AI-Powered Essay Feedback Platform
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+AI-powered SaaS platform providing instant, detailed feedback on college essays at 95% cost reduction compared to traditional coaching.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Live Application
+🔗 **[app.jainamsblueprint.com](https://app.jainamsblueprint.com)**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Key Features
+- Instant essay analysis using OpenAI GPT-4 API
+- User authentication and dashboard
+- Production-ready deployment on Vercel
+- Addresses $500-2000+ cost barrier of traditional essay coaching
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
+- **Frontend:** Next.js 15, TypeScript, Tailwind CSS
+- **Backend:** Supabase (PostgreSQL), OpenAI API
+- **Deployment:** Vercel with custom domain
 
-## Learn More
+## Problem Solved
+Traditional college essay coaching costs $500-2000+, making quality feedback inaccessible to most students. Blueprint.AI provides professional-grade essay analysis instantly and affordably.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built by Jainam Patel - University of Michigan Computer Science Student
