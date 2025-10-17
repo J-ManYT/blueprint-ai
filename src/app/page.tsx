@@ -1,6 +1,8 @@
 // src/app/page.tsx
 import Link from 'next/link';
 
+// Jainam from Mac: 10/17/25, I am trying to learn how my code works in more detail.
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-white font-[Montserrat]">
