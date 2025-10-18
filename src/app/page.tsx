@@ -1,7 +1,8 @@
 // src/app/page.tsx
 import Link from 'next/link';
 
-// Jainam from Mac: 10/17/25, I am trying to learn how my code works in more detail.
+// Jainam from Mac: 10/17/25, I am trying to learn how my code works in more detail. I am back! Right now I want to figure
+// out how all the files are structured together to make the final product.
 
 export default function Home() {
   return (
